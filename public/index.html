@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minha Loja</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="/" class="logo" id="store-logo">
+        <span class="logo-icon">🛍️</span>
+        <span id="store-name">Minha Loja</span>
+      </a>
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="Buscar produtos..." autocomplete="off">
+        <button id="search-btn" aria-label="Buscar">🔍</button>
+      </div>
+      <button class="cart-btn" id="cart-toggle" aria-label="Carrinho">
+        🛒 <span class="cart-count" id="cart-count">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Bem-vindo à nossa loja</h1>
+      <p>Produtos selecionados com qualidade e o melhor preço</p>
+    </section>
+
+    <div class="filters">
+      <button class="filter-btn active" data-category="">Todos</button>
+      <div id="category-buttons"></div>
+    </div>
+
+    <div class="products-grid" id="products-grid">
+      <div class="loading">Carregando produtos...</div>
+    </div>
+  </main>
+
+  <!-- Carrinho lateral -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+      <h2>Seu Carrinho</h2>
+      <button class="close-btn" id="cart-close">✕</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total:</span>
+        <strong id="cart-total">R$ 0,00</strong>
+      </div>
+      <button class="btn btn-primary" id="checkout-btn" disabled>Finalizar Compra</button>
+    </div>
+  </aside>
+
+  <!-- Modal Checkout -->
+  <div class="modal-overlay" id="checkout-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Finalizar Pedido</h2>
+        <button class="close-btn" id="checkout-close">✕</button>
+      </div>
+      <form id="checkout-form">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="customer_name">Nome completo *</label>
+            <input type="text" id="customer_name" name="customer_name" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Telefone / WhatsApp *</label>
+            <input type="tel" id="phone" name="phone" required placeholder="(11) 99999-9999">
+          </div>
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email">
+          </div>
+          <div class="form-group">
+            <label for="cpf">CPF</label>
+            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00">
+          </div>
+          <div class="form-group">
+            <label for="cep">CEP *</label>
+            <input type="text" id="cep" name="cep" required placeholder="00000-000">
+          </div>
+          <div class="form-group">
+            <label for="state">Estado *</label>
+            <input type="text" id="state" name="state" required maxlength="2" placeholder="SP">
+          </div>
+          <div class="form-group">
+            <label for="city">Cidade *</label>
+            <input type="text" id="city" name="city" required>
+          </div>
+          <div class="form-group full">
+            <label for="address">Endereço *</label>
+            <input type="text" id="address" name="address" required>
+          </div>
+          <div class="form-group">
+            <label for="number">Número *</label>
+            <input type="text" id="number" name="number" required>
+          </div>
+          <div class="form-group">
+            <label for="complement">Complemento</label>
+            <input type="text" id="complement" name="complement">
+          </div>
+        </div>
+        <div class="checkout-summary">
+          <p>Total do pedido: <strong id="checkout-total">R$ 0,00</strong></p>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="submit-order">Confirmar Pedido</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Sucesso -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal success-modal">
+      <div class="success-icon">✓</div>
+      <h2>Pedido realizado!</h2>
+      <p>Número do pedido: <strong id="order-number"></strong></p>
+      <div id="pix-box" style="display:none;margin:1.25rem 0;text-align:center;">
+        <p style="font-weight:600;margin-bottom:0.5rem;">Pague com PIX</p>
+        <p style="margin-bottom:0.75rem;">Valor: <strong id="pix-amount"></strong></p>
+        <img id="pix-qr-img" alt="QR Code PIX" style="max-width:220px;margin:0 auto 1rem;border:1px solid #e5e7eb;border-radius:8px;"/>
+        <p style="font-size:0.8125rem;color:#6b7280;margin-bottom:0.5rem;">Ou copie o código:</p>
+        <input type="text" id="pix-copy-code" readonly style="width:100%;padding:0.5rem;font-size:0.75rem;border:1px solid #d1d5db;border-radius:6px;margin-bottom:0.5rem;"/>
+        <button type="button" class="btn btn-primary btn-sm" id="copy-pix-btn">Copiar código PIX</button>
+        <p style="font-size:0.75rem;color:#6b7280;margin-top:0.75rem;">Após o pagamento o pedido será confirmado automaticamente.</p>
+      </div>
+      <p id="no-pix-msg">Entraremos em contato em breve pelo WhatsApp informado.</p>
+      <button class="btn btn-primary" id="success-close" style="margin-top:1rem;">Continuar comprando</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 <span id="footer-name">Minha Loja</span>. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+  <!-- Login -->
+  <div id="login-page" class="login-page">
+    <div class="login-box">
+      <h1>Painel Admin</h1>
+      <p class="subtitle">Faça login para continuar</p>
+      <form id="login-form">
+        <div class="form-group">
+          <label>Usuário</label>
+          <input type="text" id="login-user" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="login-pass" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+        <p id="login-error" style="color:#dc2626;font-size:0.875rem;margin-top:0.75rem;text-align:center;display:none;"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="admin-app" class="admin-layout" style="display:none;">
+    <aside class="admin-sidebar">
+      <h1>🛍️ Admin</h1>
+      <nav class="admin-nav">
+        <a href="#" data-panel="dashboard" class="active">Dashboard</a>
+        <a href="#" data-panel="orders">Pedidos</a>
+        <a href="#" data-panel="products">Produtos</a>
+        <a href="#" data-panel="customers">Clientes</a>
+        <a href="#" data-panel="settings">Configurações</a>
+        <a href="/" target="_blank">Ver Loja</a>
+        <a href="#" id="logout-btn" style="margin-top:1rem;color:#f87171;">Sair</a>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <!-- Dashboard -->
+      <div id="panel-dashboard" class="admin-panel active">
+        <div class="admin-header"><h2>Dashboard</h2></div>
+        <div class="stats-grid" id="stats-grid"></div>
+        <h3 style="margin-bottom:1rem;">Pedidos recentes</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody id="recent-orders"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Orders -->
+      <div id="panel-orders" class="admin-panel">
+        <div class="admin-header"><h2>Pedidos</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nº</th>
+                <th>Cliente</th>
+                <th>Telefone</th>
+                <th>Endereço</th>
+                <th>Produtos</th>
+                <th>Total</th>
+                <th>Data</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Products -->
+      <div id="panel-products" class="admin-panel">
+        <div class="admin-header">
+          <h2>Produtos</h2>
+          <button class="btn btn-primary" id="btn-new-product">+ Novo Produto</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Preço</th>
+                <th>Estoque</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="products-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Customers -->
+      <div id="panel-customers" class="admin-panel">
+        <div class="admin-header"><h2>Clientes</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>E-mail</th>
+                <th>Pedidos</th>
+                <th>Total gasto</th>
+                <th>Último pedido</th>
+              </tr>
+            </thead>
+            <tbody id="customers-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div id="panel-settings" class="admin-panel">
+        <div class="admin-header"><h2>Configurações da Loja</h2></div>
+        <div style="background:#fff;padding:1.5rem;border-radius:12px;max-width:480px;box-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1);">
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label>Nome da loja</label>
+            <input type="text" id="setting-name" style="width:100%;padding:0.625rem;border:1px solid #d1d5db;border-radius:8px;">
+          </div>
+          <button class="btn btn-primary" id="save-settings">Salvar</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Produto -->
+  <div class="modal-overlay" id="product-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="product-modal-title">Novo Produto</h2>
+        <button class="close-btn" id="product-modal-close">✕</button>
+      </div>
+      <form id="product-form" style="padding:1.25rem;">
+        <input type="hidden" id="product-id">
+        <div class="product-form-grid">
+          <div class="form-group full">
+            <label>Nome *</label>
+            <input type="text" id="prod-name" required>
+          </div>
+          <div class="form-group full">
+            <label>Descrição</label>
+            <input type="text" id="prod-desc">
+          </div>
+          <div class="form-group">
+            <label>Preço *</label>
+            <input type="number" id="prod-price" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Estoque</label>
+            <input type="number" id="prod-stock" min="0" value="0">
+          </div>
+          <div class="form-group">
+            <label>Categoria</label>
+            <input type="text" id="prod-category" placeholder="Ex: Roupas">
+          </div>
+          <div class="form-group">
+            <label>Foto</label>
+            <input type="file" id="prod-image" accept="image/*">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+          <button type="button" class="btn btn-outline" id="product-modal-cancel">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>
